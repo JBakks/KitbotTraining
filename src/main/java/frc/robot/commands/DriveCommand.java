@@ -2,16 +2,20 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.ExampleSubsystem;
+
+import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 
 
 public class DriveCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final frc.robot.subsystems.Drive drive;
-  private double rotate;
-  private double power;
+  private DoubleSupplier rotate;
+  private DoubleSupplier power;
 
-  public DriveCommand(Drive drive, double rotate, double power) {
+  public DriveCommand(Drive drive, DoubleSupplier rotate, DoubleSupplier power) {
     this.drive = drive;
     this.rotate = rotate;
     this.power = power;
@@ -25,16 +29,9 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // System.out.println("HELLO");
-    // System.out.println(power);
-    // System.out.println(rotate);
-    if(Math.abs(rotate) < 0.1){
-      rotate = 0;
-    }
-    rotate*=0.8;
-    double leftSpeed = power + rotate;
-    double rightSpeed = power - rotate;
-    drive.setPower(leftSpeed, rightSpeed);
+    double leftSpeed = power.getAsDouble() + rotate.getAsDouble();
+    double rightSpeed = power.getAsDouble() - rotate.getAsDouble();
+    drive.setPower(-leftSpeed, rightSpeed);
   }
 
   // Called once the command ends or is interrupted.
